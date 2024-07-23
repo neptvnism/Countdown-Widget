@@ -7,6 +7,7 @@
     <style>
         body {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -20,6 +21,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         .countdown h1 {
             font-size: 48px;
@@ -29,42 +31,72 @@
             font-size: 24px;
             margin: 5px 0 0;
         }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .input-container input {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .input-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="countdown">
-        <h1 id="countdown"></h1>
+        <h1 id="countdown">--d --h --m --s</h1>
         <p>until the event</p>
     </div>
+    <div class="input-container">
+        <input type="datetime-local" id="userDate" />
+        <button onclick="setCountdown()">Set Countdown</button>
+    </div>
     <script>
-        // Set the date we're counting down to
-        var countDownDate = new Date("Dec 31, 2024 23:59:59").getTime();
+        var x; // Interval variable
 
-        // Update the count down every 1 second
-        var x = setInterval(function() {
+        function setCountdown() {
+            var userDate = document.getElementById('userDate').value;
+            var countDownDate = new Date(userDate).getTime();
 
-            // Get today's date and time
-            var now = new Date().getTime();
-
-            // Find the distance between now and the count down date
-            var distance = countDownDate - now;
-
-            // Time calculations for days, hours, minutes and seconds
-            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // Output the result in an element with id="countdown"
-            document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-            + minutes + "m " + seconds + "s ";
-
-            // If the count down is over, write some text
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EXPIRED";
+            if (isNaN(countDownDate)) {
+                alert('Please select a valid date and time.');
+                return;
             }
-        }, 1000);
+
+            // Clear previous interval if exists
+            if (x) {
+                clearInterval(x);
+            }
+
+            // Update the count down every 1 second
+            x = setInterval(function() {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
+                + minutes + "m " + seconds + "s ";
+
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "EXPIRED";
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
