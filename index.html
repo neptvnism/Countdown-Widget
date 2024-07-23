@@ -70,12 +70,22 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .settings-container label,
+        .settings-container input[type="checkbox"] {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="countdown">
         <span class="settings">⚙️</span>
         <div class="settings-container">
+            <label for="modeSelect">Mode:</label>
+            <select id="modeSelect">
+                <option value="countdown">Countdown</option>
+                <option value="daysSince">Days Since</option>
+            </select>
+            <br />
             <label for="fontSelect">Font:</label>
             <select id="fontSelect">
                 <option value="Arial">Arial</option>
@@ -84,6 +94,7 @@
                 <option value="Times New Roman">Times New Roman</option>
                 <option value="Verdana">Verdana</option>
             </select>
+            <br />
             <label for="fontSizeSelect">Font Size:</label>
             <select id="fontSizeSelect">
                 <option value="24px">24px</option>
@@ -91,6 +102,21 @@
                 <option value="40px">40px</option>
                 <option value="48px">48px</option>
             </select>
+            <br />
+            <label for="includeYears">Years</label>
+            <input type="checkbox" id="includeYears" checked>
+            <label for="includeMonths">Months</label>
+            <input type="checkbox" id="includeMonths" checked>
+            <label for="includeWeeks">Weeks</label>
+            <input type="checkbox" id="includeWeeks" checked>
+            <label for="includeDays">Days</label>
+            <input type="checkbox" id="includeDays" checked>
+            <label for="includeHours">Hours</label>
+            <input type="checkbox" id="includeHours" checked>
+            <label for="includeMinutes">Minutes</label>
+            <input type="checkbox" id="includeMinutes" checked>
+            <label for="includeSeconds">Seconds</label>
+            <input type="checkbox" id="includeSeconds" checked>
         </div>
         <h1 id="countdown">--d --h --m --s</h1>
         <p id="eventLabel">until the event</p>
@@ -107,6 +133,7 @@
             var userDate = document.getElementById('userDate').value;
             var eventTitle = document.getElementById('eventTitle').value;
             var countDownDate = new Date(userDate).getTime();
+            var mode = document.getElementById('modeSelect').value;
 
             if (isNaN(countDownDate) || !eventTitle) {
                 alert('Please enter a valid date, time, and event title.');
@@ -123,17 +150,28 @@
             // Update the count down every 1 second
             x = setInterval(function() {
                 var now = new Date().getTime();
-                var distance = countDownDate - now;
+                var distance = mode === 'countdown' ? countDownDate - now : now - countDownDate;
 
-                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var years = Math.floor(distance / (1000 * 60 * 60 * 24 * 365));
+                var months = Math.floor((distance % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+                var weeks = Math.floor((distance % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7));
+                var days = Math.floor((distance % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
                 var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                document.getElementById("countdown").innerHTML = days + "d " + hours + "h "
-                + minutes + "m " + seconds + "s ";
+                var display = '';
+                if (document.getElementById('includeYears').checked) display += years + "y ";
+                if (document.getElementById('includeMonths').checked) display += months + "mo ";
+                if (document.getElementById('includeWeeks').checked) display += weeks + "w ";
+                if (document.getElementById('includeDays').checked) display += days + "d ";
+                if (document.getElementById('includeHours').checked) display += hours + "h ";
+                if (document.getElementById('includeMinutes').checked) display += minutes + "m ";
+                if (document.getElementById('includeSeconds').checked) display += seconds + "s ";
 
-                if (distance < 0) {
+                document.getElementById("countdown").innerHTML = display.trim();
+
+                if (mode === 'countdown' && distance < 0) {
                     clearInterval(x);
                     document.getElementById("countdown").innerHTML = "EXPIRED";
                 }
