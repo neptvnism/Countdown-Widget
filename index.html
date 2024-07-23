@@ -90,6 +90,9 @@
         .settings-container label {
             margin-right: 5px;
         }
+        .input-hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -121,6 +124,9 @@
             <br />
             <label for="darkModeToggle">Dark Mode:</label>
             <input type="checkbox" id="darkModeToggle">
+            <br />
+            <label for="hideInputsToggle">Hide Inputs:</label>
+            <input type="checkbox" id="hideInputsToggle">
         </div>
         <h1 id="countdown">--d --h --m --s</h1>
         <p id="eventLabel">until the event</p>
@@ -198,6 +204,11 @@
 
         document.getElementById('darkModeToggle').addEventListener('change', function() {
             document.body.classList.toggle('dark-mode');
+        });
+
+        document.getElementById('hideInputsToggle').addEventListener('change', function() {
+            var display = this.checked ? 'none' : 'flex';
+            document.querySelector('.input-container').style.display = display;
         });
     </script>
 </body>
