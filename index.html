@@ -22,6 +22,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+            position: relative;
         }
         .countdown h1 {
             font-size: 48px;
@@ -36,7 +37,8 @@
             flex-direction: column;
             align-items: center;
         }
-        .input-container input {
+        .input-container input,
+        .input-container select {
             padding: 10px;
             font-size: 16px;
             margin-bottom: 10px;
@@ -50,14 +52,51 @@
             border: none;
             border-radius: 5px;
         }
+        .settings {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+        }
+        .settings-container {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <div class="countdown">
+        <span class="settings">⚙️</span>
+        <div class="settings-container">
+            <label for="fontSelect">Font:</label>
+            <select id="fontSelect">
+                <option value="Arial">Arial</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+            <label for="fontSizeSelect">Font Size:</label>
+            <select id="fontSizeSelect">
+                <option value="24px">24px</option>
+                <option value="32px">32px</option>
+                <option value="40px">40px</option>
+                <option value="48px">48px</option>
+            </select>
+        </div>
         <h1 id="countdown">--d --h --m --s</h1>
-        <p>until the event</p>
+        <p id="eventLabel">until the event</p>
     </div>
     <div class="input-container">
+        <input type="text" id="eventTitle" placeholder="Enter event title" />
         <input type="datetime-local" id="userDate" />
         <button onclick="setCountdown()">Set Countdown</button>
     </div>
@@ -66,12 +105,15 @@
 
         function setCountdown() {
             var userDate = document.getElementById('userDate').value;
+            var eventTitle = document.getElementById('eventTitle').value;
             var countDownDate = new Date(userDate).getTime();
 
-            if (isNaN(countDownDate)) {
-                alert('Please select a valid date and time.');
+            if (isNaN(countDownDate) || !eventTitle) {
+                alert('Please enter a valid date, time, and event title.');
                 return;
             }
+
+            document.getElementById('eventLabel').textContent = eventTitle;
 
             // Clear previous interval if exists
             if (x) {
@@ -97,6 +139,20 @@
                 }
             }, 1000);
         }
+
+        document.querySelector('.settings').addEventListener('click', function() {
+            var settingsContainer = document.querySelector('.settings-container');
+            settingsContainer.style.display = settingsContainer.style.display === 'block' ? 'none' : 'block';
+        });
+
+        document.getElementById('fontSelect').addEventListener('change', function() {
+            document.querySelector('.countdown').style.fontFamily = this.value;
+        });
+
+        document.getElementById('fontSizeSelect').addEventListener('change', function() {
+            document.querySelector('.countdown h1').style.fontSize = this.value;
+            document.querySelector('.countdown p').style.fontSize = this.value;
+        });
     </script>
 </body>
 </html>
