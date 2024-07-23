@@ -14,6 +14,11 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dark-mode {
+            background-color: #333;
+            color: #f4f4f4;
         }
         .countdown {
             text-align: center;
@@ -24,6 +29,11 @@
             margin-bottom: 20px;
             position: relative;
             width: 300px;
+            transition: background 0.3s, color 0.3s;
+        }
+        .dark-mode .countdown {
+            background: #444;
+            color: #f4f4f4;
         }
         .countdown h1 {
             font-size: 48px;
@@ -70,24 +80,15 @@
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, color 0.3s;
         }
-        .settings-container label,
-        .settings-container input[type="checkbox"] {
+        .dark-mode .settings-container {
+            background: #444;
+            color: #f4f4f4;
+            border-color: #555;
+        }
+        .settings-container label {
             margin-right: 5px;
-        }
-        .progress-bar-container {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-            margin-top: 10px;
-            height: 20px;
-        }
-        .progress-bar {
-            height: 100%;
-            border-radius: 5px;
-            background-color: #007bff;
-            width: 0%;
-            transition: width 1s;
         }
     </style>
 </head>
@@ -118,29 +119,11 @@
                 <option value="48px">48px</option>
             </select>
             <br />
-            <label for="includeYears">Years</label>
-            <input type="checkbox" id="includeYears" checked>
-            <label for="includeMonths">Months</label>
-            <input type="checkbox" id="includeMonths" checked>
-            <label for="includeWeeks">Weeks</label>
-            <input type="checkbox" id="includeWeeks" checked>
-            <label for="includeDays">Days</label>
-            <input type="checkbox" id="includeDays" checked>
-            <label for="includeHours">Hours</label>
-            <input type="checkbox" id="includeHours" checked>
-            <label for="includeMinutes">Minutes</label>
-            <input type="checkbox" id="includeMinutes" checked>
-            <label for="includeSeconds">Seconds</label>
-            <input type="checkbox" id="includeSeconds" checked>
-            <br />
-            <label for="showProgressBar">Show Progress Bar</label>
-            <input type="checkbox" id="showProgressBar" checked>
+            <label for="darkModeToggle">Dark Mode:</label>
+            <input type="checkbox" id="darkModeToggle">
         </div>
         <h1 id="countdown">--d --h --m --s</h1>
         <p id="eventLabel">until the event</p>
-        <div class="progress-bar-container" id="progressBarContainer">
-            <div class="progress-bar" id="progressBar"></div>
-        </div>
     </div>
     <div class="input-container">
         <input type="text" id="eventTitle" placeholder="Enter event title" />
@@ -155,9 +138,6 @@
             var eventTitle = document.getElementById('eventTitle').value;
             var countDownDate = new Date(userDate).getTime();
             var mode = document.getElementById('modeSelect').value;
-            var progressBar = document.getElementById('progressBar');
-            var progressBarContainer = document.getElementById('progressBarContainer');
-            var showProgressBar = document.getElementById('showProgressBar').checked;
 
             if (isNaN(countDownDate) || !eventTitle) {
                 alert('Please enter a valid date, time, and event title.');
@@ -166,16 +146,10 @@
 
             document.getElementById('eventLabel').textContent = eventTitle;
 
-            // Show or hide the progress bar
-            progressBarContainer.style.display = showProgressBar ? 'block' : 'none';
-
             // Clear previous interval if exists
             if (x) {
                 clearInterval(x);
             }
-
-            // Calculate total time for progress bar
-            var totalTime = countDownDate - new Date().getTime();
 
             // Update the count down every 1 second
             x = setInterval(function() {
@@ -191,23 +165,19 @@
                 var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
                 var display = '';
-                if (document.getElementById('includeYears').checked) display += years + "y ";
-                if (document.getElementById('includeMonths').checked) display += months + "mo ";
-                if (document.getElementById('includeWeeks').checked) display += weeks + "w ";
-                if (document.getElementById('includeDays').checked) display += days + "d ";
-                if (document.getElementById('includeHours').checked) display += hours + "h ";
-                if (document.getElementById('includeMinutes').checked) display += minutes + "m ";
-                if (document.getElementById('includeSeconds').checked) display += seconds + "s ";
+                if (years > 0) display += years + "y ";
+                if (months > 0) display += months + "mo ";
+                if (weeks > 0) display += weeks + "w ";
+                if (days > 0) display += days + "d ";
+                if (hours > 0) display += hours + "h ";
+                if (minutes > 0) display += minutes + "m ";
+                if (seconds > 0) display += seconds + "s ";
 
                 document.getElementById("countdown").innerHTML = display.trim();
 
                 if (mode === 'countdown' && distance < 0) {
                     clearInterval(x);
                     document.getElementById("countdown").innerHTML = "EXPIRED";
-                    progressBar.style.width = '0%';
-                } else if (mode === 'countdown' && showProgressBar) {
-                    var progress = ((totalTime - distance) / totalTime) * 100;
-                    progressBar.style.width = progress + '%';
                 }
             }, 1000);
         }
@@ -224,6 +194,10 @@
         document.getElementById('fontSizeSelect').addEventListener('change', function() {
             document.querySelector('.countdown h1').style.fontSize = this.value;
             document.querySelector('.countdown p').style.fontSize = this.value;
+        });
+
+        document.getElementById('darkModeToggle').addEventListener('change', function() {
+            document.body.classList.toggle('dark-mode');
         });
     </script>
 </body>
